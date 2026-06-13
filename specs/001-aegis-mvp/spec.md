@@ -11,6 +11,16 @@ AEGIS serves a **single private operator**. It continuously captures market and 
 
 The non-negotiable boundaries that shape this specification come from the project constitution (C-1…C-16): advisory-only in Phase 1, determinism first (the AI never invents numbers), auditable & reproducible decisions, fail-safe silence over a bad signal, validation before production, privacy, cost control, soundness over frequency, bounded sizing, must beat HODL, systemic safeguards, and honest P&L.
 
+## Clarifications
+
+### Session 2026-06-13
+
+- Q: Default venue for the order ticket and basis for the symbol→venue mapping? → A: **Binance spot** as the default venue (native OCO, deepest top-20 liquidity), with a per-symbol mapping and failover; venues lacking native OCO degrade to a TP+SL pair per AC-11.
+- Q: Deterministic definition of "BTC bearish" for the master gate that blocks LONGs on alts? → A: **BTC daily close below its EMA200** (1d). While true, no LONG signals are emitted on altcoins (AC-14 / C-15).
+- Q: AI model routing and monthly token-cost ceiling? → A: **Haiku 4.5 for cached market-context synthesis + Opus 4.8 for the final decision over already-filtered candidates**, capped at ≈ €15/month (within the < €50/month production ceiling, C-7).
+- Q: Default exit plan (TP / breakeven / trailing) advised by exit-management? → A: **TP1 at +3% closes 50% and moves the stop to breakeven; the remainder trails toward ≥ +5%** (satisfies AC-18; the runner can reach/exceed the +5% target, AC-08).
+- Q: Default symbol universe watched by the MVP? → A: **BTC, ETH + the ~top-20 by liquidity, configurable watchlist, excluding memecoins and stablecoins.**
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Receive a vetted, executable short-swing signal (Priority: P1)
@@ -128,13 +138,13 @@ The operator wants a private dashboard and an API to review candles with indicat
 ### Functional Requirements
 
 **Capture & context**
-- **FR-001**: System MUST continuously (24/7) capture price/volume history across multiple venues for the watched universe, on the base and confirmation timeframes plus higher timeframes for trend context, with automatic failover between venues.
+- **FR-001**: System MUST continuously (24/7) capture price/volume history across multiple venues for the watched universe — **BTC, ETH plus the ~top-20 assets by liquidity, via a configurable watchlist that excludes memecoins and stablecoins** — on the base and confirmation timeframes plus higher timeframes for trend context, with automatic failover between venues.
 - **FR-002**: System MUST capture context signals at no cost: community sentiment/regime, news, geopolitical/macro tone, a forward macro-economic calendar, derivatives/positioning data, market-wide BTC dominance, and security/exploit alerts.
 - **FR-003**: System MUST treat slow/lagged sentiment sources as a regime filter, not as an intraday trigger; intraday triggers MUST rest on price/volume/structure plus near-real-time news/security signals.
 
 **Deterministic computation & gates**
 - **FR-004**: System MUST compute all indicators, levels, market regime, and risk:reward figures deterministically and persist them; these figures are the single source of truth for any downstream decision.
-- **FR-005**: System MUST evaluate deterministic pre-gates BEFORE confluence and BEFORE any AI invocation: market regime, BTC master gate, liquidity/spread, derivatives sanity, and systemic safeguard. Failing any gate produces no candidate.
+- **FR-005**: System MUST evaluate deterministic pre-gates BEFORE confluence and BEFORE any AI invocation: market regime, BTC master gate, liquidity/spread, derivatives sanity, and systemic safeguard. The **BTC master gate treats BTC as bearish when its daily (1d) close is below its EMA200**, and while bearish it blocks all altcoin LONG candidates. Failing any gate produces no candidate.
 - **FR-006**: System MUST apply conservative multi-condition confluence rules to surface scored signal candidates, each carrying a complete order ticket and feature set.
 - **FR-007**: System MUST enforce risk:reward ≥ 1:2 and a target of ≥ +5%, discarding non-compliant candidates without invoking the AI.
 - **FR-008**: System MUST apply a deterministic pre-event macro filter with a 12h-before / 2h-after window: blackout for maximum-impact events; a caution flag (reinforced confluence, reduced size) for medium-impact events; applied market-wide.
@@ -144,12 +154,12 @@ The operator wants a private dashboard and an API to review candles with indicat
 - **FR-010**: System MUST validate, after AI output, that every figure in the signal matches the persisted candidate/indicators; on mismatch the signal is discarded and the incident recorded.
 - **FR-011**: System MUST persist, for every signal, the inputs, summarized reasoning, model, and decision so each decision is auditable and reproducible.
 - **FR-012**: System MUST, on any AI unavailability, invalid output, or unresolved missing input, emit no signal (fail-safe).
-- **FR-013**: System MUST bound AI cost: context synthesis is cached and refreshed periodically or on event (not on every candle); the AI is invoked only when candidates exist; the bull/bear debate is limited to a single round over already-filtered candidates.
+- **FR-013**: System MUST bound AI cost: **market-context synthesis runs on Haiku 4.5 (cached, refreshed periodically or on event, not on every candle); the final emit/discard/watch decision runs on Opus 4.8 over already-filtered candidates only**; the bull/bear debate is limited to a single round; total AI token spend MUST stay within ≈ €15/month (inside the < €50/month production ceiling, C-7).
 
 **Order ticket, sizing & exit management**
-- **FR-014**: System MUST attach to every signal an executable order ticket — entry, take-profit, stop, order structure (OCO / TP+SL / market+trailing) supported by the target venue, size, target venue, and validity — and MUST NOT place, modify, or cancel any order in Phase 1.
+- **FR-014**: System MUST attach to every signal an executable order ticket — entry, take-profit, stop, order structure (OCO / TP+SL / market+trailing) supported by the target venue, size, target venue, and validity — and MUST NOT place, modify, or cancel any order in Phase 1. The **default target venue is Binance spot** (native OCO), resolved per symbol via a configurable symbol→venue mapping with failover; on a venue without native OCO the ticket degrades to a TP+SL pair (AC-11).
 - **FR-015**: System MUST size every signal by the dual-constraint model (configured notional vs a percentage-of-capital risk ceiling), respect the aggregate risk cap, the per-correlation cap, and available free capital; a signal with no free capital for its notional is not emitted.
-- **FR-016**: System MUST, after entry, advise on dynamic exit management — partial take-profit, move-to-breakeven, trailing of the remainder, and early exit on invalidation — via management advisories, without executing.
+- **FR-016**: System MUST, after entry, advise on dynamic exit management — via management advisories, without executing — following the **default exit plan: at TP1 (+3%) advise closing 50% and moving the stop to breakeven; trail the remainder toward the ≥ +5% target; exit early on invalidation**. The plan is configurable per strategy.
 - **FR-017**: System MUST automatically reduce size or pause signaling when recent (real where available, else simulated) equity-curve performance deteriorates.
 - **FR-018**: System MUST label every signal's outcome deterministically (HIT / STOP / EXPIRED) within its horizon as the ground truth, independent of the AI.
 
@@ -208,7 +218,9 @@ These reasonable defaults were taken from the binding brief where details were u
 - **Operator model**: A single private operator (not multi-user / not SaaS); the operator places orders manually in Phase 1.
 - **Direction & instrument**: LONG-only on **spot** in the MVP (no shorts, no leverage/derivatives trading — derivatives data is used only as a signal input).
 - **Cadence & horizon**: Short-swing — base 1h with 15m confirmation and 4h/1d trend context; holding hours to ~1–2 days; no scalping (nothing sub-15m). Target +5% fixed; cadence ~2/day aspirational, uncapped.
-- **Universe (default)**: BTC, ETH, and ~top-20 by liquidity, with a configurable watchlist.
+- **Universe (default)**: BTC, ETH, and ~top-20 by liquidity, with a configurable watchlist; memecoins and stablecoins are excluded.
+- **Target venue (default)**: Binance spot (native OCO), with a configurable per-symbol venue mapping and failover.
+- **AI routing (default)**: Haiku 4.5 for cached context synthesis, Opus 4.8 for the final decision; ≈ €15/month token-cost ceiling.
 - **Capital & risk (default)**: Reference capital €2,000–5,000; notional €500–1,000 per trade; dual-constraint sizing with a 2% per-trade risk ceiling, 6% aggregate risk cap, plus a correlation cap and free-capital limit.
 - **Macro policy (default)**: Hybrid by impact — blackout for maximum-impact (rate decision, CPI, NFP), caution for medium-impact — with a 12h-before / 2h-after window, applied market-wide.
 - **Validation horizon (default)**: A 2–4 week shadow/forward period before promotion; promotion KPIs precision ≥ 60%, profit factor ≥ 1.8, risk:reward ≥ 1:2, calibration error ≤ 10%, alpha-vs-HODL > 0.
@@ -218,16 +230,15 @@ These reasonable defaults were taken from the binding brief where details were u
 
 ### Deferred to `/speckit.clarify` (refinements with working defaults already in place)
 
-1. Exact universe (fixed top-20 vs manual watchlist; stablecoin/memecoin inclusion).
-2. Exact reference capital within €2–5k and definitive risk percentage (2% accepted as ceiling).
-3. Default target venue for the order ticket and the symbol→venue mapping.
-4. Exact TA thresholds (EMA periods, RSI levels, MACD/Bollinger params, ATR stop multiplier) — initial values exist, to be tuned by backtest.
-5. Macro-event impact classification (which events are maximum vs medium) and exact free-tier limits of the calendar source.
-6. Exact shadow/forward duration before promotion.
-7. Definitive promotion KPIs.
-8. Telegram alert language (English vs Spanish).
-9. Remote-access mechanism (Tailscale / WireGuard / other).
-10. AI model routing and monthly token/cost ceiling.
-11. New-gate thresholds (minimum ADX, "BTC bearish" definition, "extreme" funding, minimum 24h liquidity, depeg threshold, maximum correlation).
-12. Exact exit plan (TP1/TP2 levels, % closed at each, breakeven trigger, trailing callback).
-13. Real-P&L integration mechanism with the operator's portfolio tool and the derivatives/liquidations source free-tier limits.
+_(Resolved in the Clarifications session 2026-06-13: exact universe, default target venue, AI model routing & cost ceiling, "BTC bearish" definition, and the default exit plan. The items below remain open.)_
+
+1. Exact reference capital within €2–5k and definitive risk percentage (2% accepted as ceiling).
+2. Exact TA thresholds (EMA periods, RSI levels, MACD/Bollinger params, ATR stop multiplier) — initial values exist, to be tuned by backtest.
+3. Macro-event impact classification (which events are maximum vs medium) and exact free-tier limits of the calendar source.
+4. Exact shadow/forward duration before promotion.
+5. Definitive promotion KPIs.
+6. Telegram alert language (English vs Spanish).
+7. Remote-access mechanism (Tailscale / WireGuard / other).
+8. Remaining new-gate thresholds (minimum ADX, "extreme" funding, minimum 24h liquidity, depeg threshold, maximum correlation).
+9. Exact trailing callback % and whether a second take-profit (TP2) tier is added beyond the default TP1+runner plan.
+10. Real-P&L integration mechanism with the operator's portfolio tool and the derivatives/liquidations source free-tier limits.
