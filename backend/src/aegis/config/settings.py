@@ -16,5 +16,7 @@ class Settings(BaseSettings):
     db_dsn: str = "postgresql+asyncpg://aegis:aegis@127.0.0.1:5432/aegis"
     api_key: str = Field(default="change-me-internal-service-key")
     jwt_secret: str = Field(default="change-me-long-random-secret")
+    # CORS is restricted to the dashboard origin only (FR-027).
+    dashboard_origin: str = "http://localhost:3000"
     # AI cost ceiling guidance (C-7); enforced by the cost monitor (T092).
     ai_monthly_eur_cap: float = 15.0

@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from uuid import UUID
 
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from aegis.domain import (
@@ -91,10 +92,8 @@ class SignalRepository:
             )
         )
 
-    async def get_signal(self, signal_id: UUID) -> Signal | None:
-        row = await self._s.get(SignalRow, signal_id)
-        if row is None:
-            return None
+    @staticmethod
+    def _to_signal(row: SignalRow) -> Signal:
         return Signal(
             id=row.id,
             candidate_id=row.candidate_id,
@@ -112,6 +111,17 @@ class SignalRepository:
             status=SignalStatus(row.status),
             ts=row.ts,
         )
+
+    async def get_signal(self, signal_id: UUID) -> Signal | None:
+        row = await self._s.get(SignalRow, signal_id)
+        return self._to_signal(row) if row is not None else None
+
+    async def list_signals(self, *, status: str | None = None, limit: int = 100) -> list[Signal]:
+        stmt = select(SignalRow).order_by(SignalRow.ts.desc()).limit(limit)
+        if status is not None:
+            stmt = stmt.where(SignalRow.status == status)
+        rows = (await self._s.execute(stmt)).scalars().all()
+        return [self._to_signal(r) for r in rows]
 
     # --- order ticket ---
     async def add_order_ticket(self, signal_id: UUID, t: OrderTicket) -> None:

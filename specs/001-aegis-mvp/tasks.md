@@ -54,9 +54,9 @@ indicators, API skeleton). **⚠️ No user story can begin until this phase is 
 - [ ] T018 Implement OHLCV ingestion workers (ccxt async, rate-limit, backoff, failover Binance→MEXC→Coinbase→BitMart) in `backend/src/aegis/ingestion/ohlcv.py`
 - [ ] T019 Implement `ContextProvider` interface + merge/dedup base in `backend/src/aegis/ingestion/context.py`
 - [ ] T020 Implement APScheduler (AsyncIOScheduler + Postgres jobstore); schedule ingest/indicators on 15m/1h close in `backend/src/aegis/scheduler/`
-- [ ] T021 Implement FastAPI app skeleton with private binding + reverse-proxy TLS wiring in `backend/src/aegis/api/app.py`
-- [ ] T022 Write FAILING contract tests for auth (API key + JWT scopes) + rate limiting in `backend/tests/contract/test_auth.py`
-- [ ] T023 Implement auth (X-API-Key + JWT read/admin scopes), slowapi rate limiting, CORS restricted to dashboard in `backend/src/aegis/api/auth.py`
+- [X] T021 Implement FastAPI app factory + CORS + rate limiting in `backend/src/aegis/api/app.py` (private binding/TLS is a compose/uvicorn concern, AC-07)
+- [X] T022 Contract tests for auth (API key + JWT scopes) in `backend/tests/contract/test_auth.py`
+- [X] T023 Implement auth (X-API-Key in `api/deps.py` + JWT read/admin scopes in `api/auth.py`), slowapi rate limiting, CORS restricted to dashboard
 
 **Checkpoint**: Deterministic core + persistence + ingestion + API skeleton ready.
 
@@ -72,7 +72,7 @@ every figure matches the persisted candidate; no order placed anywhere.
 
 ### Tests for User Story 1 (write first — must fail)
 
-- [ ] T024 [P] [US1] Contract tests for GET `/signals`, `/signals/{id}`, `/signals/{id}/order` vs OpenAPI in `backend/tests/contract/test_signals_api.py`
+- [X] T024 [P] [US1] Contract tests for GET `/signals`, `/signals/{id}`, `/signals/{id}/order` vs OpenAPI in `backend/tests/contract/test_signals_api.py`
 - [ ] T025 [P] [US1] Contract tests for `market-context` + `signal-analyst` skill I/O schemas in `backend/tests/contract/test_skills_us1.py`
 - [X] T026 [P] [US1] Unit test confluence engine + R:R < 1:2 discard without AI in `backend/tests/unit/test_confluence.py` (AC-03)
 - [X] T027 [P] [US1] Unit test post-AI numeric reconciliation + fail-safe in `backend/tests/unit/test_reconciliation.py` (AC-04, AC-05)
@@ -90,7 +90,7 @@ every figure matches the persisted candidate; no order placed anywhere.
 - [X] T036 [US1] Implement fail-safe guard (AI unavailable/invalid/missing figure → no signal) in `backend/src/aegis/ai/failsafe.py` (AC-05, FR-012)
 - [X] T037 [P] [US1] Author `alert-composer` skill SKILL.md (English, disclaimer, copy-paste ticket) in `skills/alert-composer/`
 - [ ] T038 [US1] Implement Telegram outbound `SIGNAL` alert (aiogram v3) with order ticket + disclaimer in `backend/src/aegis/telegram/outbound/signal.py` (+ shared `outbound/base.py`) (FR-019/026, C-10)
-- [ ] T039 [US1] Implement POST `/internal/signals` (loopback) + GET `/signals`, `/signals/{id}`, `/signals/{id}/order`, `/candles`, `/indicators` in `backend/src/aegis/api/routers/signals.py`
+- [~] T039 [US1] POST `/internal/signals` (reconcile→persist, 409 on mismatch) + GET `/signals`, `/signals/{id}`, `/signals/{id}/order` + `/health` DONE in `backend/src/aegis/api/routers/signals.py`; PENDING `/candles`, `/indicators` (need ingestion data)
 - [ ] T040 [US1] Wire scheduler job: candidate(s) → AI pipeline → reconcile → persist → alert (< 30 s, SC-005) in `backend/src/aegis/scheduler/jobs/signal_run.py`
 
 **Checkpoint**: 🎯 MVP — US1 fully functional and independently testable.

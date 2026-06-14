@@ -63,6 +63,8 @@ addopts = "-q"
 [tool.coverage.run]
 source = ["src/aegis"]
 branch = true
+# SQLAlchemy async bridges via greenlet; without this, async endpoint bodies read as uncovered.
+concurrency = ["thread", "greenlet"]
 
 [tool.coverage.report]
 # Constitution C-8 / CLAUDE.md §13: minimum coverage gate fixed at 80% (2026-06-14).
@@ -76,9 +78,14 @@ src = ["src", "tests"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "ASYNC", "S"]
-# S101 (assert) is fine in tests.
+
+[tool.ruff.lint.flake8-bugbear]
+# FastAPI dependency-injection markers are intentionally used as argument defaults.
+extend-immutable-calls = ["fastapi.Depends", "fastapi.Query", "fastapi.Header"]
+
 [tool.ruff.lint.per-file-ignores]
-"tests/**" = ["S101"]
+# S101 assert / S105-S106 dummy secrets are fine in tests.
+"tests/**" = ["S101", "S105", "S106"]
 
 [tool.mypy]
 python_version = "3.12"
