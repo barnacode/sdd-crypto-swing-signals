@@ -120,3 +120,10 @@ conflict with `constitution.md`, the constitution prevails and you must flag the
 
 **Precedence:** constitution.md > this file > spec/plan/tasks > ad-hoc decisions. Flag any conflict
 instead of silently resolving it.
+
+## Active Technologies
+- Python 3.12 (backend/analysis); TypeScript / Node 20 (dashboard) + ccxt (async, public endpoints only), TA-Lib + `pandas-ta-classic` (001-aegis-mvp)
+- PostgreSQL + TimescaleDB (single source of truth — hypertables for OHLC/indicators/ (001-aegis-mvp)
+
+## Recent Changes
+- 001-aegis-mvp: Added Python 3.12 (backend/analysis); TypeScript / Node 20 (dashboard) + ccxt (async, public endpoints only), TA-Lib + `pandas-ta-classic`
