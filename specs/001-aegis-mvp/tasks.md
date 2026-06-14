@@ -74,13 +74,13 @@ every figure matches the persisted candidate; no order placed anywhere.
 
 - [ ] T024 [P] [US1] Contract tests for GET `/signals`, `/signals/{id}`, `/signals/{id}/order` vs OpenAPI in `backend/tests/contract/test_signals_api.py`
 - [ ] T025 [P] [US1] Contract tests for `market-context` + `signal-analyst` skill I/O schemas in `backend/tests/contract/test_skills_us1.py`
-- [ ] T026 [P] [US1] Unit test confluence engine + R:R < 1:2 discard without AI in `backend/tests/unit/test_confluence.py` (AC-03)
+- [X] T026 [P] [US1] Unit test confluence engine + R:R < 1:2 discard without AI in `backend/tests/unit/test_confluence.py` (AC-03)
 - [ ] T027 [P] [US1] Unit test post-AI numeric reconciliation + fail-safe in `backend/tests/unit/test_reconciliation.py` (AC-04, AC-05)
 - [ ] T028 [P] [US1] Integration test end-to-end happy path (valid setup → one SIGNAL, figures match, no order placed) in `backend/tests/integration/test_us1_signal.py`
 
 ### Implementation for User Story 1
 
-- [ ] T029 [P] [US1] Implement confluence engine (trend/momentum/MACD/volume/structure/volatility, R:R ≥ 1:2) → `signal_candidates` in `backend/src/aegis/candidates/confluence.py` (AC-03, FR-006/007)
+- [X] T029 [P] [US1] Implement confluence engine (trend/momentum/MACD/volume/structure/volatility, R:R ≥ 1:2) → `signal_candidates` in `backend/src/aegis/candidates/confluence.py` (AC-03, FR-006/007)
 - [ ] T030 [P] [US1] Implement order-ticket builder + dual-constraint sizing (entry/stop/target/notional/structure, Binance default, TP_SL degrade) in `backend/src/aegis/candidates/order_ticket.py` (AC-09, AC-11, FR-014)
 - [ ] T031 [US1] Implement signals/candidates/order_tickets/ai_audit repositories in `backend/src/aegis/persistence/repositories/signals.py`
 - [ ] T032 [P] [US1] Author `market-context` skill (Haiku 4.5) SKILL.md + output schema in `skills/market-context/`
