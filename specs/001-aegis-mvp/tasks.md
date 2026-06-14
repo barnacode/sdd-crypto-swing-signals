@@ -108,8 +108,8 @@ suppressed/gated or a global pause is raised, without invoking the AI when a det
 ### Tests for User Story 2 (write first — must fail)
 
 - [X] T041 [P] [US2] Unit tests for pre-gates G1–G5 in isolation (regime; BTC 1d close < EMA200; liquidity; derivatives; systemic/depeg) in `backend/tests/unit/test_gates.py` (AC-02/14/15/17)
-- [ ] T042 [P] [US2] Unit test macro pre-event blackout/caution window (12h before / 2h after) in `backend/tests/unit/test_macro_filter.py` (AC-12)
-- [ ] T043 [P] [US2] Unit test risk-guardian sizing / 6% aggregate cap / correlation / free-capital veto in `backend/tests/unit/test_risk_guardian.py` (AC-10)
+- [X] T042 [P] [US2] Unit test macro pre-event blackout/caution window (12h before / 2h after) in `backend/tests/unit/test_macro_filter.py` (AC-12)
+- [X] T043 [P] [US2] Unit test risk-guardian sizing / 6% aggregate cap / correlation / free-capital veto in `backend/tests/unit/test_risk_guardian.py` (AC-10)
 - [ ] T044 [P] [US2] Integration test: each adverse condition suppresses LONG / raises pause, AI not invoked on deterministic gate fail in `backend/tests/integration/test_us2_gates.py`
 
 ### Implementation for User Story 2
@@ -118,9 +118,9 @@ suppressed/gated or a global pause is raised, without invoking the AI when a det
 - [ ] T046 [P] [US2] Implement context providers (sentiment Fear&Greed/Reddit/Santiment; news/geo GDELT/RSS; security PeckShield/De.Fi; systemic/depeg) in `backend/src/aegis/ingestion/providers/`
 - [ ] T047 [P] [US2] Implement macro calendar provider (FMP/FRED/FOMC) + `macro_events` persistence in `backend/src/aegis/ingestion/providers/macro.py`
 - [X] T048 [US2] Implement deterministic pre-gates G1–G5 (run BEFORE confluence; no LLM on fail) in `backend/src/aegis/candidates/gates.py` (AC-02/14/15/17, FR-005)
-- [ ] T049 [US2] Implement macro pre-event filter (blackout/caution, market-wide) in `backend/src/aegis/candidates/macro_filter.py` (AC-12, FR-008)
+- [X] T049 [US2] Implement macro pre-event filter (blackout/caution, market-wide) in `backend/src/aegis/candidates/macro_filter.py` (AC-12, FR-008)
 - [ ] T050 [P] [US2] Author `risk-guardian` skill (Opus 4.8) SKILL.md + schema in `skills/risk-guardian/`
-- [ ] T051 [US2] Implement risk-guardian sizing/exposure/correlation/free-capital veto in `backend/src/aegis/candidates/risk_guardian.py` (AC-10, FR-015)
+- [X] T051 [US2] Implement risk-guardian sizing/exposure/correlation/free-capital veto in `backend/src/aegis/candidates/risk_guardian.py` (AC-10, FR-015)
 - [ ] T052 [US2] Implement `SECURITY_ALERT` / `MACRO_EVENT` / `SYSTEMIC_ALERT` + global pause in `backend/src/aegis/telegram/outbound/context_alerts.py` (AC-13/17, C-14)
 - [ ] T053 [US2] Integrate gates + macro + risk-guardian into the candidate→signal pipeline (gates precede confluence/AI) in `backend/src/aegis/scheduler/jobs/signal_run.py`
 
