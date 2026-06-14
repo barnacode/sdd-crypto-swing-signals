@@ -1,0 +1,80 @@
+{
+  "info": {
+    "name": "AEGIS Internal API",
+    "_postman_id": "aegis-internal-api-v1",
+    "description": "AEGIS — advisory short-swing crypto signals (Phase 1). Private read API.\n\n**Advisory only.** No endpoint places, modifies, or cancels orders (constitution C-1). This API is private (loopback / VPN); never expose it to the public internet (AC-07).\n\n## Setup\n1. Import this collection.\n2. Open the collection variables and set `baseUrl` and `apiKey` (matches `AEGIS_API_KEY` in your `.env`).\n3. All requests except `health` send `X-API-Key` automatically via collection-level auth.\n\nFigures in responses are Decimal strings (e.g. `\"2.00000000\"`) — the deterministic source of truth (C-2).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      { "key": "key", "value": "X-API-Key", "type": "string" },
+      { "key": "value", "value": "{{apiKey}}", "type": "string" },
+      { "key": "in", "value": "header", "type": "string" }
+    ]
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://127.0.0.1:8000/api/v1", "description": "Dev: uvicorn on loopback. Behind Caddy/TLS in prod it is https://localhost/api/v1 (via VPN)." },
+    { "key": "apiKey", "value": "change-me-internal-service-key", "description": "Must equal AEGIS_API_KEY in .env" },
+    { "key": "signalId", "value": "", "description": "UUID of a signal (fill from a /signals response)" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "auth": { "type": "noauth" },
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{baseUrl}}/health", "host": ["{{baseUrl}}"], "path": ["health"] },
+        "description": "Liveness/readiness. Public, but only reachable on the private network (AC-07). Returns `{\"status\":\"ok\"}`."
+      }
+    },
+    {
+      "name": "List signals",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/signals?status=ACTIVE",
+          "host": ["{{baseUrl}}"],
+          "path": ["signals"],
+          "query": [
+            { "key": "status", "value": "ACTIVE", "description": "Optional. One of EMITTED|ACTIVE|TARGET_HIT|STOPPED|INVALIDATED|EXPIRED|DISCARDED", "disabled": false }
+          ]
+        },
+        "description": "List signals (most recent first). Requires X-API-Key. Drop the `status` query to list all."
+      }
+    },
+    {
+      "name": "Get signal by id",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{baseUrl}}/signals/{{signalId}}", "host": ["{{baseUrl}}"], "path": ["signals", "{{signalId}}"] },
+        "description": "Single signal with thesis, bull/bear case, invalidation, confidence and status. 404 if unknown."
+      }
+    },
+    {
+      "name": "Get signal order ticket",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{baseUrl}}/signals/{{signalId}}/order", "host": ["{{baseUrl}}"], "path": ["signals", "{{signalId}}", "order"] },
+        "description": "The executable (advisory) order ticket: entry/TP/SL, OCO|TP_SL|MARKET_TRAILING, size, target_exchange, validity. NEVER placed (C-1). 404 if no ticket."
+      }
+    },
+    {
+      "name": "Publish signal (internal — AI loopback)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"candidate_id\": \"REPLACE-WITH-PERSISTED-CANDIDATE-UUID\",\n  \"side\": \"LONG\",\n  \"entry\": \"100\",\n  \"stop\": \"96\",\n  \"target\": \"108\",\n  \"rr\": \"2.0\",\n  \"confidence\": 72,\n  \"thesis\": \"breakout with volume confirmation\",\n  \"bull_case\": \"trend + momentum aligned\",\n  \"bear_case\": \"macro event risk\",\n  \"invalidation\": \"1h close below 96\",\n  \"ai_rationale\": \"bull vs bear summary\",\n  \"status\": \"EMITTED\",\n  \"ts\": \"2026-06-14T00:00:00Z\"\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/internal/signals", "host": ["{{baseUrl}}"], "path": ["internal", "signals"] },
+        "description": "Loopback-only. The AI layer posts a decided signal here AFTER the deterministic reconciliation. The endpoint re-verifies every figure against the persisted candidate: **409** on mismatch (no hallucinated number reaches the operator — AC-04 / C-2), **404** if the candidate is unknown, **201** on success. `candidate_id` must reference a candidate produced by the deterministic engine; figures must equal it exactly."
+      }
+    }
+  ]
+}

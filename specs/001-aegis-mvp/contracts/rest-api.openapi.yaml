@@ -1,0 +1,252 @@
+openapi: 3.1.0
+info:
+  title: AEGIS Internal API
+  version: 1.0.0-mvp
+  description: >
+    Read API for the AEGIS advisory short-swing crypto signals system (Phase 1).
+    Private network / VPN only — never exposed to the public internet (AC-07, C-6).
+    NO order-execution endpoint exists or will exist in Phase 1 (C-1, FR-023).
+servers:
+  - url: https://localhost/api/v1
+    description: Local-only (loopback / Docker network, TLS via Caddy/Traefik)
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key          # services / scripts / AI layer
+    BearerJWT:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT         # dashboard; scopes: read, admin
+  schemas:
+    Candle:
+      type: object
+      required: [symbol, exchange, tf, ts, open, high, low, close, volume]
+      properties:
+        symbol: { type: string, example: "BTC/USDT" }
+        exchange: { type: string }
+        tf: { type: string, enum: ["15m", "1h", "4h", "1d"] }
+        ts: { type: string, format: date-time }
+        open: { type: number }
+        high: { type: number }
+        low: { type: number }
+        close: { type: number }
+        volume: { type: number }
+    Indicators:
+      type: object
+      properties:
+        symbol: { type: string }
+        tf: { type: string }
+        ts: { type: string, format: date-time }
+        ema50: { type: number }
+        ema200: { type: number }
+        rsi14: { type: number }
+        macd: { type: number }
+        macd_sig: { type: number }
+        macd_hist: { type: number }
+        atr14: { type: number }
+        adx14: { type: number }
+        vol_rel: { type: number }
+        regime: { type: string, enum: ["trending", "ranging", "high_vol"] }
+    Signal:
+      type: object
+      required: [id, side, entry, stop, target, rr, confidence, status]
+      properties:
+        id: { type: string, format: uuid }
+        candidate_id: { type: string, format: uuid }
+        side: { type: string, enum: ["LONG"] }
+        entry: { type: number }
+        stop: { type: number }
+        target: { type: number }
+        rr: { type: number, minimum: 2.0 }
+        confidence: { type: integer, minimum: 0, maximum: 100 }
+        thesis: { type: string }
+        bull_case: { type: string }
+        bear_case: { type: string }
+        invalidation: { type: string }
+        status:
+          type: string
+          enum: ["EMITTED", "ACTIVE", "TARGET_HIT", "STOPPED", "INVALIDATED", "EXPIRED", "DISCARDED"]
+        ts: { type: string, format: date-time }
+    OrderTicket:
+      type: object
+      description: Advisory only — never placed/modified/cancelled (C-1, AC-09).
+      properties:
+        signal_id: { type: string, format: uuid }
+        entry_type: { type: string, enum: ["LIMIT", "MARKET"] }
+        entry_price: { type: number }
+        quantity: { type: number }
+        notional: { type: number }
+        order_structure: { type: string, enum: ["OCO", "TP_SL", "MARKET_TRAILING"] }
+        take_profit: { type: number }
+        sl_trigger: { type: number }
+        sl_limit: { type: number }
+        trailing:
+          type: object
+          nullable: true
+          properties:
+            activation: { type: number }
+            callback: { type: number }
+        exit_plan: { type: object }
+        tif: { type: string, enum: ["GTC"] }
+        target_exchange: { type: string, example: "binance" }
+        valid_until: { type: string, format: date-time }
+    Outcome:
+      type: object
+      properties:
+        signal_id: { type: string, format: uuid }
+        result: { type: string, enum: ["HIT", "STOP", "EXPIRED"] }
+        realized_pct: { type: number }
+        closed_at: { type: string, format: date-time }
+    Performance:
+      type: object
+      properties:
+        precision: { type: number }
+        profit_factor: { type: number }
+        rr: { type: number }
+        calibration_error: { type: number }
+        alpha_vs_hodl: { type: number }
+    Error:
+      type: object
+      properties:
+        detail: { type: string }
+
+security:
+  - ApiKeyAuth: []
+  - BearerJWT: []
+
+paths:
+  /health:
+    get:
+      summary: Liveness/readiness
+      security: []          # public, but only reachable on the intranet
+      responses:
+        "200": { description: OK }
+  /symbols:
+    get:
+      summary: Watched universe + status
+      responses:
+        "200":
+          description: list
+          content:
+            application/json:
+              schema: { type: array, items: { type: object } }
+  /candles/{symbol}:
+    get:
+      parameters:
+        - { name: symbol, in: path, required: true, schema: { type: string } }
+        - { name: tf, in: query, required: true, schema: { type: string, enum: ["15m","1h","4h","1d"] } }
+        - { name: from, in: query, schema: { type: string, format: date-time } }
+        - { name: to, in: query, schema: { type: string, format: date-time } }
+      responses:
+        "200":
+          description: OHLCV series
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: "#/components/schemas/Candle" } }
+  /indicators/{symbol}:
+    get:
+      parameters:
+        - { name: symbol, in: path, required: true, schema: { type: string } }
+        - { name: tf, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: computed indicators
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Indicators" }
+  /context/{symbol}:
+    get:
+      parameters:
+        - { name: symbol, in: path, required: true, schema: { type: string } }
+      responses:
+        "200": { description: aggregated context snapshot }
+  /signals:
+    get:
+      parameters:
+        - { name: status, in: query, schema: { type: string } }
+        - { name: from, in: query, schema: { type: string, format: date-time } }
+        - { name: to, in: query, schema: { type: string, format: date-time } }
+      responses:
+        "200":
+          description: signals
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: "#/components/schemas/Signal" } }
+  /signals/{id}:
+    get:
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, format: uuid } }]
+      responses:
+        "200":
+          description: signal + thesis + AI audit reference
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Signal" }
+        "404": { description: not found, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+  /signals/{id}/order:
+    get:
+      summary: Executable order ticket (advisory)
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, format: uuid } }]
+      responses:
+        "200":
+          description: order ticket
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/OrderTicket" }
+  /signals/{id}/outcome:
+    get:
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, format: uuid } }]
+      responses:
+        "200":
+          description: labeled outcome
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Outcome" }
+  /performance:
+    get:
+      parameters:
+        - { name: from, in: query, schema: { type: string, format: date-time } }
+        - { name: to, in: query, schema: { type: string, format: date-time } }
+      responses:
+        "200":
+          description: aggregated KPIs
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Performance" }
+  /backtests:
+    post:
+      summary: Launch a backtest (admin)
+      security: [{ BearerJWT: [] }]
+      responses:
+        "202": { description: accepted }
+        "403": { description: forbidden }
+  /backtests/{id}:
+    get:
+      security: [{ BearerJWT: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, format: uuid } }]
+      responses:
+        "200": { description: backtest result }
+  /internal/signals:
+    post:
+      summary: AI publishes a signal (loopback only + internal API key)
+      description: >
+        Only reachable on loopback. The AI layer posts an emitted signal here AFTER the deterministic
+        reconciliation check passes. This is NOT an order-execution endpoint (C-1).
+      security: [{ ApiKeyAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/Signal" }
+      responses:
+        "201": { description: persisted }
+        "409": { description: reconciliation mismatch — signal rejected, incident recorded (AC-04) }
+  /audit/{signal_id}:
+    get:
+      summary: Full AI decision trace (admin)
+      security: [{ BearerJWT: [] }]
+      parameters: [{ name: signal_id, in: path, required: true, schema: { type: string, format: uuid } }]
+      responses:
+        "200": { description: audit record }

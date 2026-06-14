@@ -1,0 +1,71 @@
+# AEGIS local stack — private, 24/7, no inbound public exposure (C-6 / AC-07).
+# Services bind to loopback / the internal Docker network only. Remote access is via
+# Cloudflare WARP through a private-network tunnel (no public hostname).
+services:
+  timescaledb:
+    image: timescale/timescaledb:2.17.2-pg16
+    environment:
+      POSTGRES_USER: aegis
+      POSTGRES_PASSWORD: aegis
+      POSTGRES_DB: aegis
+    volumes:
+      - tsdb_data:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432"   # loopback only
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aegis"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    env_file: .env
+    depends_on:
+      timescaledb:
+        condition: service_healthy
+    command: uvicorn aegis.api.app:app --host 127.0.0.1 --port 8000
+    ports:
+      - "127.0.0.1:8000:8000"   # loopback only; reverse proxy terminates TLS in front
+
+  scheduler:
+    build: ./backend
+    env_file: .env
+    depends_on:
+      timescaledb:
+        condition: service_healthy
+    command: python -m aegis.scheduler
+
+  dashboard:
+    build: ./frontend
+    env_file: .env
+    depends_on:
+      - backend
+    ports:
+      - "127.0.0.1:3000:3000"   # loopback only
+
+  caddy:
+    image: caddy:2.8
+    depends_on:
+      - backend
+      - dashboard
+    volumes:
+      - ./infra/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+    ports:
+      - "127.0.0.1:443:443"     # TLS, loopback only
+
+  # Cloudflare Zero Trust tunnel in PRIVATE-NETWORK mode (no public hostname).
+  # The operator reaches the stack only through Cloudflare WARP (the VPN). Outbound-only.
+  cloudflared:
+    image: cloudflare/cloudflared:2024.12.1
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN}
+    depends_on:
+      - caddy
+    restart: unless-stopped
+
+volumes:
+  tsdb_data:
+  caddy_data:
