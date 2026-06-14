@@ -6,7 +6,7 @@ status). This file is intentionally coarse to avoid drifting from `tasks.md`.
 
 **Legend:** ✅ done · 🔄 in progress · ⏳ planned · ⛔ blocked / needs amendment
 
-_Last updated: 2026-06-14_
+_Last updated: 2026-06-14 (US1 data path running on real market data)_
 
 ---
 
@@ -22,8 +22,8 @@ validation gate).
 
 | Story | Goal | Status |
 |---|---|---|
-| Setup + Foundational | tooling, domain, persistence, indicators, ingestion, scheduler, API | 🔄 core done; ingestion/scheduler/logging pending |
-| **US1 (P1) — vetted advisory signal** | ingest → compute → confluence → AI → reconcile → Telegram `SIGNAL` | 🔄 deterministic core + AI layer + persistence + read API done; **Telegram + scheduler wiring + e2e pending** |
+| Setup + Foundational | tooling, domain, persistence, indicators, ingestion, scheduler, API | ✅ (logging/ingestion/scheduler done) |
+| **US1 (P1) — vetted advisory signal** | ingest → compute → confluence → AI → reconcile → Telegram `SIGNAL` | 🔄 **runs on real market data end-to-end** (ccxt ingest → indicators → confluence → AI → reconcile → persist → Telegram). Pending: 15m confirmation timeframe, single chained e2e test, skill-schema contract test |
 | US2 (P2) — safety gates | deterministic pre-gates G1–G5 + macro filter + risk-guardian | ⏳ |
 | US5 (P2) — validation gate | backtest, outcome labeling, alpha-vs-HODL, promotion/circuit-breaker | ⏳ |
 | US3 (P3) — exit management | TP1/breakeven/trailing advisories | ⏳ |
@@ -41,9 +41,10 @@ validation gate).
 
 ### Known partials / TODO within Phase 1
 - Schema bootstrap works via SQLAlchemy; **Alembic migration + continuous aggregates** still TODO.
-- API: `/candles`, `/indicators` and the admin/JWT endpoints pending (need ingestion data / US5/US6).
-- Ingestion (ccxt OHLCV + context providers), APScheduler wiring, structured logging — pending.
-- Telegram outbound (`SIGNAL` + confirmation loop) and the end-to-end US1 test — pending.
+- Admin/JWT endpoints (`/backtests`, `/audit`, `/performance`) pending (US5/US6).
+- Context providers: only the interface + merge/dedup base exist; concrete free-tier providers land with US2.
+- 15m entry-confirmation timeframe and the inbound Telegram confirmation loop (US4) — pending.
+- A single chained end-to-end US1 test (currently covered in three real tranches: ingestion, confluence, pipeline).
 
 ## Phase 2 — Hardening & validation
 Forward-test in shadow mode, calibration, circuit breaker, TradingAgents external benchmark, CI
