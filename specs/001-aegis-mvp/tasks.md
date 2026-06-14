@@ -47,9 +47,9 @@ indicators, API skeleton). **⚠️ No user story can begin until this phase is 
 - [ ] T011 [P] Implement structured logging (no secret/body leakage) + error-handling middleware in `backend/src/aegis/config/logging.py`
 - [ ] T012 Author Alembic migration: tables + hypertables (ohlc, indicators, derivatives) + continuous aggregates 1h→4h→1d in `backend/src/aegis/persistence/migrations/`
 - [ ] T013 Implement persistence base (async engine/session, repository pattern) in `backend/src/aegis/persistence/base.py`
-- [ ] T014 Build pytest harness + real, traceable OHLCV fixtures in `backend/tests/conftest.py` and `backend/tests/fixtures/`
-- [ ] T015 [P] Write FAILING unit tests for indicators (EMA/RSI/MACD/BB/ATR/ADX/vol_rel/regime) against real fixtures in `backend/tests/unit/test_indicators.py`
-- [ ] T016 Implement indicators engine (TA-Lib + pandas-ta-classic) + regime classifier, idempotent, persist ≤ 5 s after candle close in `backend/src/aegis/indicators/` (AC-01)
+- [X] T014 Build pytest harness + real, traceable OHLCV fixtures in `backend/tests/conftest.py` and `backend/tests/fixtures/`
+- [X] T015 [P] Write FAILING unit tests for indicators (EMA/RSI/MACD/BB/ATR/ADX/vol_rel/regime) against real fixtures in `backend/tests/unit/test_indicators.py`
+- [X] T016 Implement indicators engine (TA-Lib + pandas-ta-classic) + regime classifier, idempotent, persist ≤ 5 s after candle close in `backend/src/aegis/indicators/` (AC-01)
 - [ ] T017 Write FAILING integration test for ccxt OHLCV ingestion + failover in `backend/tests/integration/test_ingestion.py`
 - [ ] T018 Implement OHLCV ingestion workers (ccxt async, rate-limit, backoff, failover Binance→MEXC→Coinbase→BitMart) in `backend/src/aegis/ingestion/ohlcv.py`
 - [ ] T019 Implement `ContextProvider` interface + merge/dedup base in `backend/src/aegis/ingestion/context.py`

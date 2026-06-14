@@ -24,11 +24,14 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-# Requires the TA-Lib C library on the host (`brew install ta-lib`). pandas-ta-classic
-# is pure-Python and is the primary indicator engine; TA-Lib is the optional accelerator.
+# pandas-ta-classic is pure-Python and is the PRIMARY indicator engine.
 indicators = [
     "pandas-ta-classic>=0.3",
-    "TA-Lib>=0.4; platform_system != 'no-talib'",
+]
+# TA-Lib is an OPTIONAL accelerator; it needs the TA-Lib C library on the host
+# (`brew install ta-lib` / `apt-get install ta-lib0-dev`).
+talib = [
+    "TA-Lib>=0.4",
 ]
 backtest = [
     "vectorbt>=0.26",
@@ -81,3 +84,7 @@ python_version = "3.12"
 strict = true
 files = ["src/aegis"]
 plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+module = ["pandas_ta_classic.*", "pandas.*"]
+ignore_missing_imports = true

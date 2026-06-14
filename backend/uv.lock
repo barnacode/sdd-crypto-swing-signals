@@ -44,7 +44,9 @@ backtest = [
 ]
 indicators = [
     { name = "pandas-ta-classic" },
-    { name = "ta-lib", marker = "platform_system != 'no-talib'" },
+]
+talib = [
+    { name = "ta-lib" },
 ]
 
 [package.dev-dependencies]
@@ -76,11 +78,11 @@ requires-dist = [
     { name = "slowapi", specifier = ">=0.1.9" },
     { name = "sqlalchemy", extras = ["asyncio"], specifier = ">=2.0" },
     { name = "structlog", specifier = ">=24.4" },
-    { name = "ta-lib", marker = "platform_system != 'no-talib' and extra == 'indicators'", specifier = ">=0.4" },
+    { name = "ta-lib", marker = "extra == 'talib'", specifier = ">=0.4" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.32" },
     { name = "vectorbt", marker = "extra == 'backtest'", specifier = ">=0.26" },
 ]
-provides-extras = ["indicators", "backtest"]
+provides-extras = ["indicators", "talib", "backtest"]
 
 [package.metadata.requires-dev]
 dev = [

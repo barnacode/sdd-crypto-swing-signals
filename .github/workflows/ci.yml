@@ -24,8 +24,8 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Sync dependencies (incl. indicators)
-        run: uv sync --group dev --extra indicators
+      - name: Sync dependencies (indicators + optional TA-Lib accelerator)
+        run: uv sync --group dev --extra indicators --extra talib
 
       - name: Lint (ruff)
         run: uv run ruff check .
