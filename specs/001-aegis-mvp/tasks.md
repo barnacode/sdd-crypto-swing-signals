@@ -89,7 +89,7 @@ every figure matches the persisted candidate; no order placed anywhere.
 - [ ] T035 [US1] Implement post-AI numeric reconciliation + incident recording in `backend/src/aegis/ai/reconciliation.py` (AC-04, C-2)
 - [ ] T036 [US1] Implement fail-safe guard (AI unavailable/invalid/missing figure → no signal) in `backend/src/aegis/ai/failsafe.py` (AC-05, FR-012)
 - [ ] T037 [P] [US1] Author `alert-composer` skill SKILL.md (English, disclaimer, copy-paste ticket) in `skills/alert-composer/`
-- [ ] T038 [US1] Implement Telegram outbound `SIGNAL` alert (aiogram v3) with order ticket + disclaimer in `backend/src/aegis/telegram/outbound.py` (FR-019/026, C-10)
+- [ ] T038 [US1] Implement Telegram outbound `SIGNAL` alert (aiogram v3) with order ticket + disclaimer in `backend/src/aegis/telegram/outbound/signal.py` (+ shared `outbound/base.py`) (FR-019/026, C-10)
 - [ ] T039 [US1] Implement POST `/internal/signals` (loopback) + GET `/signals`, `/signals/{id}`, `/signals/{id}/order`, `/candles`, `/indicators` in `backend/src/aegis/api/routers/signals.py`
 - [ ] T040 [US1] Wire scheduler job: candidate(s) → AI pipeline → reconcile → persist → alert (< 30 s, SC-005) in `backend/src/aegis/scheduler/jobs/signal_run.py`
 
@@ -121,7 +121,7 @@ suppressed/gated or a global pause is raised, without invoking the AI when a det
 - [ ] T049 [US2] Implement macro pre-event filter (blackout/caution, market-wide) in `backend/src/aegis/candidates/macro_filter.py` (AC-12, FR-008)
 - [ ] T050 [P] [US2] Author `risk-guardian` skill (Opus 4.8) SKILL.md + schema in `skills/risk-guardian/`
 - [ ] T051 [US2] Implement risk-guardian sizing/exposure/correlation/free-capital veto in `backend/src/aegis/candidates/risk_guardian.py` (AC-10, FR-015)
-- [ ] T052 [US2] Implement `SECURITY_ALERT` / `MACRO_EVENT` / `SYSTEMIC_ALERT` + global pause in `backend/src/aegis/telegram/outbound.py` (AC-13/17, C-14)
+- [ ] T052 [US2] Implement `SECURITY_ALERT` / `MACRO_EVENT` / `SYSTEMIC_ALERT` + global pause in `backend/src/aegis/telegram/outbound/context_alerts.py` (AC-13/17, C-14)
 - [ ] T053 [US2] Integrate gates + macro + risk-guardian into the candidate→signal pipeline (gates precede confluence/AI) in `backend/src/aegis/scheduler/jobs/signal_run.py`
 
 **Checkpoint**: US1 + US2 work; signals are gated by the full safety stack.
@@ -175,7 +175,7 @@ invalidation. Never executes.
 
 - [ ] T068 [P] [US3] Author `exit-manager` skill SKILL.md + schema in `skills/exit-manager/`
 - [ ] T069 [US3] Implement exit-manager logic (scale-out/BE/trailing/early-exit, default plan TP1 +3% close 50% → BE → trail ≥ +5%) in `backend/src/aegis/candidates/exit_manager.py` (AC-18, FR-016)
-- [ ] T070 [US3] Implement `TRADE_MANAGEMENT` + `TARGET_HIT`/`STOP_HIT`/`INVALIDATED` alerts in `backend/src/aegis/telegram/outbound.py` (AC-08, AC-18)
+- [ ] T070 [US3] Implement `TRADE_MANAGEMENT` + `TARGET_HIT`/`STOP_HIT`/`INVALIDATED` alerts in `backend/src/aegis/telegram/outbound/management.py` (AC-08, AC-18)
 - [ ] T071 [US3] Wire per-candle position-watch job (uses outcome labeler from US5) in `backend/src/aegis/scheduler/jobs/position_watch.py`
 
 **Checkpoint**: Open positions are actively managed via advisories.
@@ -238,6 +238,9 @@ internet they are unreachable.
 - [ ] T087 [P] Documentation (README, operator runbook) in `docs/`
 - [ ] T088 Run `quickstart.md` end-to-end validation (smoke + first-signal + safety checks)
 - [ ] T089 Static + test sweep confirming ZERO order-execution paths exist anywhere (SC-011, C-1)
+- [ ] T090 [P] Implement ingestion resilience (per-venue reconnect/backoff + heartbeat) and an uptime monitor for the capture pipeline in `backend/src/aegis/ingestion/health.py` (SC-007)
+- [ ] T091 [P] Implement security-alert false-positive measurement/calibration (track FP rate, target < 5%) in `backend/src/aegis/validation/security_fp.py` (SC-008)
+- [ ] T092 [P] Implement monthly AI-token + data-cost monitor with the < €50/month ceiling alarm in `backend/src/aegis/ai/cost_monitor.py` (SC-009, C-7)
 
 ---
 
@@ -332,4 +335,7 @@ US4 (real P&L) → US6 (dashboard). Each adds value without breaking earlier sto
 - Every test task is RED before its implementation task (C-8); one commit per task (CLAUDE.md §2/§5).
 - No task places, modifies, or cancels an exchange order — advisory only (C-1). T089 verifies this.
 - The determinism boundary (Python numbers vs AI judgment) is enforced by T035 reconciliation.
-- Total: 89 tasks — Setup 8, Foundational 15, US1 17, US2 13, US5 12, US3 6, US4 4, US6 6, Polish 8.
+- Total: 92 tasks — Setup 8, Foundational 15, US1 17, US2 13, US5 12, US3 6, US4 4, US6 6, Polish 11.
+- Telegram outbound is modularized under `telegram/outbound/` (signal / context_alerts / management)
+  so US1/US2/US3 do not contend on a single file.
+- SC coverage closed by Polish: SC-007→T090, SC-008→T091, SC-009→T092.
