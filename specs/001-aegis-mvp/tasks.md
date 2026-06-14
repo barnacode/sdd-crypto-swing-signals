@@ -89,9 +89,9 @@ every figure matches the persisted candidate; no order placed anywhere.
 - [X] T035 [US1] Implement post-AI numeric reconciliation + incident recording in `backend/src/aegis/ai/reconciliation.py` (AC-04, C-2)
 - [X] T036 [US1] Implement fail-safe guard (AI unavailable/invalid/missing figure → no signal) in `backend/src/aegis/ai/failsafe.py` (AC-05, FR-012)
 - [X] T037 [P] [US1] Author `alert-composer` skill SKILL.md (English, disclaimer, copy-paste ticket) in `skills/alert-composer/`
-- [ ] T038 [US1] Implement Telegram outbound `SIGNAL` alert (aiogram v3) with order ticket + disclaimer in `backend/src/aegis/telegram/outbound/signal.py` (+ shared `outbound/base.py`) (FR-019/026, C-10)
+- [X] T038 [US1] Implement Telegram outbound `SIGNAL` alert (aiogram v3) with order ticket + disclaimer in `backend/src/aegis/telegram/outbound/signal.py` (+ shared `outbound/base.py`) (FR-019/026, C-10)
 - [~] T039 [US1] POST `/internal/signals` (reconcile→persist, 409 on mismatch) + GET `/signals`, `/signals/{id}`, `/signals/{id}/order` + `/health` DONE in `backend/src/aegis/api/routers/signals.py`; PENDING `/candles`, `/indicators` (need ingestion data)
-- [ ] T040 [US1] Wire scheduler job: candidate(s) → AI pipeline → reconcile → persist → alert (< 30 s, SC-005) in `backend/src/aegis/scheduler/jobs/signal_run.py`
+- [X] T040 [US1] Wire signal pipeline: candidate → AI → reconcile → persist → alert in `backend/src/aegis/scheduler/jobs/signal_run.py` (the APScheduler periodic trigger is T020; SC-005 latency measured once ingestion is wired)
 
 **Checkpoint**: 🎯 MVP — US1 fully functional and independently testable.
 
