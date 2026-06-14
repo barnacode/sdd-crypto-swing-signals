@@ -81,7 +81,7 @@ every figure matches the persisted candidate; no order placed anywhere.
 ### Implementation for User Story 1
 
 - [X] T029 [P] [US1] Implement confluence engine (trend/momentum/MACD/volume/structure/volatility, R:R ≥ 1:2) → `signal_candidates` in `backend/src/aegis/candidates/confluence.py` (AC-03, FR-006/007)
-- [ ] T030 [P] [US1] Implement order-ticket builder + dual-constraint sizing (entry/stop/target/notional/structure, Binance default, TP_SL degrade) in `backend/src/aegis/candidates/order_ticket.py` (AC-09, AC-11, FR-014)
+- [X] T030 [P] [US1] Implement order-ticket builder + dual-constraint sizing (entry/stop/target/notional/structure, Binance default, TP_SL degrade) in `backend/src/aegis/candidates/order_ticket.py` (AC-09, AC-11, FR-014)
 - [ ] T031 [US1] Implement signals/candidates/order_tickets/ai_audit repositories in `backend/src/aegis/persistence/repositories/signals.py`
 - [ ] T032 [P] [US1] Author `market-context` skill (Haiku 4.5) SKILL.md + output schema in `skills/market-context/`
 - [ ] T033 [P] [US1] Author `signal-analyst` skill (Opus 4.8) SKILL.md + output schema in `skills/signal-analyst/`
