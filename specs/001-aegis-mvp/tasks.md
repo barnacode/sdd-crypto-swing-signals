@@ -83,12 +83,12 @@ every figure matches the persisted candidate; no order placed anywhere.
 - [X] T029 [P] [US1] Implement confluence engine (trend/momentum/MACD/volume/structure/volatility, R:R ≥ 1:2) → `signal_candidates` in `backend/src/aegis/candidates/confluence.py` (AC-03, FR-006/007)
 - [X] T030 [P] [US1] Implement order-ticket builder + dual-constraint sizing (entry/stop/target/notional/structure, Binance default, TP_SL degrade) in `backend/src/aegis/candidates/order_ticket.py` (AC-09, AC-11, FR-014)
 - [ ] T031 [US1] Implement signals/candidates/order_tickets/ai_audit repositories in `backend/src/aegis/persistence/repositories/signals.py`
-- [ ] T032 [P] [US1] Author `market-context` skill (Haiku 4.5) SKILL.md + output schema in `skills/market-context/`
-- [ ] T033 [P] [US1] Author `signal-analyst` skill (Opus 4.8) SKILL.md + output schema in `skills/signal-analyst/`
-- [ ] T034 [US1] Implement AI orchestration client (invoke skills, low temperature, schema-validated output) in `backend/src/aegis/ai/orchestrator.py` (FR-009/013)
+- [X] T032 [P] [US1] Author `market-context` skill (Haiku 4.5) SKILL.md + output schema in `skills/market-context/`
+- [X] T033 [P] [US1] Author `signal-analyst` skill (Opus 4.8) SKILL.md + output schema in `skills/signal-analyst/`
+- [X] T034 [US1] Implement AI orchestration client (invoke skills, schema-validated structured output — `temperature` is removed on Opus 4.8) in `backend/src/aegis/ai/orchestrator.py` (FR-009/013)
 - [X] T035 [US1] Implement post-AI numeric reconciliation + incident recording in `backend/src/aegis/ai/reconciliation.py` (AC-04, C-2)
 - [X] T036 [US1] Implement fail-safe guard (AI unavailable/invalid/missing figure → no signal) in `backend/src/aegis/ai/failsafe.py` (AC-05, FR-012)
-- [ ] T037 [P] [US1] Author `alert-composer` skill SKILL.md (English, disclaimer, copy-paste ticket) in `skills/alert-composer/`
+- [X] T037 [P] [US1] Author `alert-composer` skill SKILL.md (English, disclaimer, copy-paste ticket) in `skills/alert-composer/`
 - [ ] T038 [US1] Implement Telegram outbound `SIGNAL` alert (aiogram v3) with order ticket + disclaimer in `backend/src/aegis/telegram/outbound/signal.py` (+ shared `outbound/base.py`) (FR-019/026, C-10)
 - [ ] T039 [US1] Implement POST `/internal/signals` (loopback) + GET `/signals`, `/signals/{id}`, `/signals/{id}/order`, `/candles`, `/indicators` in `backend/src/aegis/api/routers/signals.py`
 - [ ] T040 [US1] Wire scheduler job: candidate(s) → AI pipeline → reconcile → persist → alert (< 30 s, SC-005) in `backend/src/aegis/scheduler/jobs/signal_run.py`
