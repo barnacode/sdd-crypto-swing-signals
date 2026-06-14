@@ -7,7 +7,7 @@ clear, measurable, and consistent — testing the written requirements, not the 
 
 ## Network exposure & transport
 - [ ] CHK001 Is "no inbound public exposure" specified with the concrete binding requirement (loopback/Docker network)? [Clarity, Spec §FR-027, AC-07]
-- [ ] CHK002 Is the remote-access mechanism requirement defined, or explicitly deferred with a placeholder owner? [Gap, Spec §Deferred #6]
+- [x] CHK002 Is the remote-access mechanism defined as a requirement (Cloudflare Zero Trust: Tunnel private-network + WARP, no public hostname)? [Resolved 2026-06-14, research.md §A-9, AC-07]
 - [ ] CHK003 Is "TLS always, including intranet" stated as a requirement for all transport? [Completeness, Spec §FR-027]
 - [ ] CHK004 Are the negative requirements ("no port open to the WAN") expressed verifiably? [Measurability, AC-07]
 

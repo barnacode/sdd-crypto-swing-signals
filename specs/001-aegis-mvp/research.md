@@ -65,6 +65,18 @@ and re-run when tuning changes them).
   labeling feeds the alpha-vs-HODL benchmark (ADR-006/017).
 - **Alternatives rejected**: tools with live-trading hooks (conflict with advisory-only C-1).
 
+### A-9. Remote access: Cloudflare Zero Trust (Tunnel private-network + WARP)
+- **Decision**: expose nothing publicly. A `cloudflared` **Tunnel runs in private-network mode (no
+  public hostname)**; the operator reaches the dashboard/API only through **Cloudflare WARP** enrolled
+  in the Zero Trust org. Service stays bound to loopback/Docker; the tunnel is outbound-only.
+- **Rationale**: WARP is the VPN client, so this satisfies "remote access only via VPN" and "never on
+  the public internet" (C-6, AC-07, FR-027, ADR-007) without opening any inbound port — and without a
+  constitution amendment, since the principle is preserved, not relaxed.
+- **Trade-off accepted**: Cloudflare sits in the control plane (a third party). Acceptable for the MVP;
+  a fully self-hosted WireGuard/Tailscale path remains a no-third-party alternative if privacy needs tighten.
+- **Alternatives rejected**: Cloudflare Tunnel with a **public hostname + Access** (reachable from the
+  public internet even if login-gated → would contradict AC-07 and require a constitution amendment).
+
 ---
 
 ## B. Initial parameter values (deferred refinements — tunable by backtest)

@@ -60,7 +60,7 @@ from the constitution and introduces no violations.
 | **C-3** Auditable & reproducible | `ai_audit` persists prompt hash, inputs, summarized reasoning, model, decision; low temperature + schema-validated structured output (FR-011). |
 | **C-4** Fail-safe | AI unavailability / invalid output / missing figure → no signal; incident recorded (FR-012, AC-05). |
 | **C-5** Validation before production | Strategies stay in shadow mode until the validation pipeline + promotion gate pass; circuit breaker demotes on degradation (FR-024/025, AC-06). |
-| **C-6** Private & secure | Loopback/Docker binding, VPN-only remote, TLS always, secrets in env/secrets, pinned+audited deps (FR-027, AC-07). |
+| **C-6** Private & secure | Loopback/Docker binding; remote access via Cloudflare Zero Trust (Tunnel private-network + WARP, no public hostname → unreachable from the public internet); TLS always; secrets in env/secrets; pinned+audited deps (FR-027, AC-07). |
 | **C-7** Cost controlled | €0 data sources in MVP; AI routing Haiku-context + Opus-decision capped ≈ €15/mo; context cached, AI invoked only on filtered candidates, single-round debate (FR-013). |
 | **C-8** TDD | Tests precede implementation; every bug fix ships a real-data regression test; one commit per task. Enforced by CLAUDE.md §2 and the tasks ordering. |
 | **C-9** Zero tech debt | No `TODO: fix later`, no silenced errors; CLAUDE.md §7 + coverage gate. |

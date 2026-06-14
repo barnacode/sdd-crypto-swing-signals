@@ -225,19 +225,18 @@ These reasonable defaults were taken from the binding brief where details were u
 - **Macro policy (default)**: Hybrid by impact — blackout for maximum-impact (rate decision, CPI, NFP), caution for medium-impact — with a 12h-before / 2h-after window, applied market-wide.
 - **Validation horizon (default)**: A 2–4 week shadow/forward period before promotion; promotion KPIs precision ≥ 60%, profit factor ≥ 1.8, risk:reward ≥ 1:2, calibration error ≤ 10%, alpha-vs-HODL > 0.
 - **Delivery**: Telegram to a single private chat, 24/7; UI strings in English (documentation/chat in Spanish).
-- **Access**: Private only — no inbound public exposure; remote access via VPN.
+- **Access**: Private only — no inbound public exposure; remote access via Cloudflare Zero Trust (Tunnel in private-network mode + WARP, no public hostname), which is unreachable from the public internet.
 - **Data cost**: All MVP data sources are free; multi-source design tolerates provider tier changes via fallbacks.
 
 ### Deferred to `/speckit.clarify` (refinements with working defaults already in place)
 
-_(Resolved in the Clarifications session 2026-06-13: exact universe, default target venue, AI model routing & cost ceiling, "BTC bearish" definition, and the default exit plan. Resolved 2026-06-14 during analyze: Telegram alert language = **English** — aligned with the constitution's UI-string language; documentation/chat with the operator stay Spanish. The items below remain open.)_
+_(Resolved in the Clarifications session 2026-06-13: exact universe, default target venue, AI model routing & cost ceiling, "BTC bearish" definition, and the default exit plan. Resolved 2026-06-14: Telegram alert language = **English** (aligned with the constitution's UI-string language; documentation/chat stay Spanish); remote access = **Cloudflare Zero Trust — Tunnel in private-network mode + WARP, no public hostname**, which keeps the service unreachable from the public internet and satisfies C-6/AC-07 (WARP is the VPN client; the tunnel is outbound-only). The items below remain open.)_
 
 1. Exact reference capital within €2–5k and definitive risk percentage (2% accepted as ceiling).
 2. Exact TA thresholds (EMA periods, RSI levels, MACD/Bollinger params, ATR stop multiplier) — initial values exist, to be tuned by backtest.
 3. Macro-event impact classification (which events are maximum vs medium) and exact free-tier limits of the calendar source.
 4. Exact shadow/forward duration before promotion.
 5. Definitive promotion KPIs.
-6. Remote-access mechanism (Tailscale / WireGuard / other).
-7. Remaining new-gate thresholds (minimum ADX, "extreme" funding, minimum 24h liquidity, depeg threshold, maximum correlation).
-8. Exact trailing callback % and whether a second take-profit (TP2) tier is added beyond the default TP1+runner plan.
-9. Real-P&L integration mechanism with the operator's portfolio tool and the derivatives/liquidations source free-tier limits.
+6. Remaining new-gate thresholds (minimum ADX, "extreme" funding, minimum 24h liquidity, depeg threshold, maximum correlation).
+7. Exact trailing callback % and whether a second take-profit (TP2) tier is added beyond the default TP1+runner plan.
+8. Real-P&L integration mechanism with the operator's portfolio tool and the derivatives/liquidations source free-tier limits.

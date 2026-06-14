@@ -112,9 +112,9 @@ conflict with `constitution.md`, the constitution prevails and you must flag the
 
 ## 13 · Test coverage gate (HARD)
 
-- CI enforces a **minimum coverage threshold of ≥ 80%** (proposed default — confirm/adjust in the
-  plan/CI config). Financial-critical logic (indicators, candidate engine, sizing, determinism check)
-  targets higher. Coverage below the gate blocks merge.
+- CI enforces a **minimum coverage threshold of ≥ 80%** (fixed 2026-06-14). Financial-critical logic
+  (indicators, candidate engine, sizing, determinism check) targets higher. Coverage below the gate
+  blocks merge.
 
 ---
 

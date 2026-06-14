@@ -40,7 +40,7 @@ completeness, clarity, consistency, measurability, and coverage across spec/plan
 ## Ambiguities & conflicts
 - [ ] CHK021 Are there any remaining vague adjectives ("strong", "conservative", "solid") used without a measurable definition? [Ambiguity]
 - [ ] CHK022 Do any tasks reference files/components not present in plan.md's structure? [Conflict, tasks.md]
-- [ ] CHK023 Is the test coverage gate (≥ 80%) confirmed as a definitive requirement rather than a proposal? [Ambiguity, CLAUDE.md §13]
+- [x] CHK023 Is the test coverage gate fixed at ≥ 80% (financial-critical higher)? [Confirmed 2026-06-14, CLAUDE.md §13]
 
 ## Notes
 - This validates the requirements' quality; it does not test the running system.

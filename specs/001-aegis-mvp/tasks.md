@@ -32,7 +32,7 @@ Web app per plan.md: backend Python at `backend/src/aegis/`, tests at `backend/t
 - [ ] T004 [P] Configure backend lint/format/type tools (ruff, black, mypy) in `backend/pyproject.toml`
 - [ ] T005 [P] Configure frontend lint/format (eslint, prettier) in `frontend/`
 - [ ] T006 [P] Configure CI with coverage gate ≥ 80%, `pip-audit` dependency scan, and secret scan in `.github/workflows/ci.yml`
-- [ ] T007 Author `docker-compose.yml` (timescaledb, backend, scheduler, dashboard, Caddy reverse proxy) bound to loopback/Docker network in repo root
+- [ ] T007 Author `docker-compose.yml` (timescaledb, backend, scheduler, dashboard, Caddy reverse proxy, **`cloudflared` Tunnel in private-network mode — no public hostname**) bound to loopback/Docker network in repo root (remote access via Cloudflare WARP only, AC-07)
 - [ ] T008 [P] Create `.env.example` with all MVP keys and verify `.env` is gitignored
 
 ---
