@@ -43,10 +43,10 @@ Web app per plan.md: backend Python at `backend/src/aegis/`, tests at `backend/t
 indicators, API skeleton). **⚠️ No user story can begin until this phase is complete.**
 
 - [X] T009 [P] Define domain Pydantic v2 schemas for all entities in `backend/src/aegis/domain/` (candle, indicators, derivatives, context, macro_event, signal_candidate, signal, order_ticket, ai_audit, alert, outcome, position, strategy, backtest)
-- [ ] T010 Implement settings + secret loading + data-provider registry in `backend/src/aegis/config/`
+- [X] T010 Implement settings + secret loading in `backend/src/aegis/config/settings.py` (data-provider registry lands with ingestion)
 - [ ] T011 [P] Implement structured logging (no secret/body leakage) + error-handling middleware in `backend/src/aegis/config/logging.py`
-- [ ] T012 Author Alembic migration: tables + hypertables (ohlc, indicators, derivatives) + continuous aggregates 1h→4h→1d in `backend/src/aegis/persistence/migrations/`
-- [ ] T013 Implement persistence base (async engine/session, repository pattern) in `backend/src/aegis/persistence/base.py`
+- [~] T012 Schema bootstrap with tables + hypertables (ohlc, indicators, derivatives) in `backend/src/aegis/persistence/schema.py` — DONE via SQLAlchemy + create_hypertable; PENDING: wrap as an Alembic migration + continuous aggregates 1h→4h→1d
+- [X] T013 Implement persistence base (async engine/session, repository pattern) in `backend/src/aegis/persistence/base.py`
 - [X] T014 Build pytest harness + real, traceable OHLCV fixtures in `backend/tests/conftest.py` and `backend/tests/fixtures/`
 - [X] T015 [P] Write FAILING unit tests for indicators (EMA/RSI/MACD/BB/ATR/ADX/vol_rel/regime) against real fixtures in `backend/tests/unit/test_indicators.py`
 - [X] T016 Implement indicators engine (TA-Lib + pandas-ta-classic) + regime classifier, idempotent, persist ≤ 5 s after candle close in `backend/src/aegis/indicators/` (AC-01)
@@ -82,7 +82,7 @@ every figure matches the persisted candidate; no order placed anywhere.
 
 - [X] T029 [P] [US1] Implement confluence engine (trend/momentum/MACD/volume/structure/volatility, R:R ≥ 1:2) → `signal_candidates` in `backend/src/aegis/candidates/confluence.py` (AC-03, FR-006/007)
 - [X] T030 [P] [US1] Implement order-ticket builder + dual-constraint sizing (entry/stop/target/notional/structure, Binance default, TP_SL degrade) in `backend/src/aegis/candidates/order_ticket.py` (AC-09, AC-11, FR-014)
-- [ ] T031 [US1] Implement signals/candidates/order_tickets/ai_audit repositories in `backend/src/aegis/persistence/repositories/signals.py`
+- [X] T031 [US1] Implement signals/candidates/order_tickets/ai_audit repositories in `backend/src/aegis/persistence/repositories/signals.py`
 - [X] T032 [P] [US1] Author `market-context` skill (Haiku 4.5) SKILL.md + output schema in `skills/market-context/`
 - [X] T033 [P] [US1] Author `signal-analyst` skill (Opus 4.8) SKILL.md + output schema in `skills/signal-analyst/`
 - [X] T034 [US1] Implement AI orchestration client (invoke skills, schema-validated structured output — `temperature` is removed on Opus 4.8) in `backend/src/aegis/ai/orchestrator.py` (FR-009/013)
