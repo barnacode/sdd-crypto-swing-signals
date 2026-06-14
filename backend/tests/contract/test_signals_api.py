@@ -10,13 +10,8 @@ from __future__ import annotations
 from datetime import UTC, datetime
 from decimal import Decimal
 
-import pytest_asyncio
-from httpx import ASGITransport, AsyncClient
-
 from aegis.ai import build_signal_from_decision, parse_ai_decision
-from aegis.api.app import create_app
 from aegis.candidates import build_order_ticket
-from aegis.config.settings import Settings
 from aegis.domain import Side, SignalCandidate, Timeframe
 from aegis.persistence.base import make_sessionmaker
 from aegis.persistence.repositories.signals import SignalRepository
@@ -48,15 +43,6 @@ def _signal_json(candidate: SignalCandidate, **over):
     assert decision is not None
     sig = build_signal_from_decision(candidate, decision).model_copy(update=over)
     return sig.model_dump(mode="json")
-
-
-@pytest_asyncio.fixture
-async def client(db_engine):
-    settings = Settings()
-    app = create_app(settings)
-    app.state.sessionmaker = make_sessionmaker(db_engine)
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as c:
-        yield c, settings, db_engine
 
 
 async def _persist_candidate(db_engine, candidate):

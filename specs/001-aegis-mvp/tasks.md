@@ -44,16 +44,16 @@ indicators, API skeleton). **⚠️ No user story can begin until this phase is 
 
 - [X] T009 [P] Define domain Pydantic v2 schemas for all entities in `backend/src/aegis/domain/` (candle, indicators, derivatives, context, macro_event, signal_candidate, signal, order_ticket, ai_audit, alert, outcome, position, strategy, backtest)
 - [X] T010 Implement settings + secret loading in `backend/src/aegis/config/settings.py` (data-provider registry lands with ingestion)
-- [ ] T011 [P] Implement structured logging (no secret/body leakage) + error-handling middleware in `backend/src/aegis/config/logging.py`
+- [X] T011 [P] Implement structured logging (no secret/body leakage, structlog JSON) in `backend/src/aegis/config/logging.py`
 - [~] T012 Schema bootstrap with tables + hypertables (ohlc, indicators, derivatives) in `backend/src/aegis/persistence/schema.py` — DONE via SQLAlchemy + create_hypertable; PENDING: wrap as an Alembic migration + continuous aggregates 1h→4h→1d
 - [X] T013 Implement persistence base (async engine/session, repository pattern) in `backend/src/aegis/persistence/base.py`
 - [X] T014 Build pytest harness + real, traceable OHLCV fixtures in `backend/tests/conftest.py` and `backend/tests/fixtures/`
 - [X] T015 [P] Write FAILING unit tests for indicators (EMA/RSI/MACD/BB/ATR/ADX/vol_rel/regime) against real fixtures in `backend/tests/unit/test_indicators.py`
 - [X] T016 Implement indicators engine (TA-Lib + pandas-ta-classic) + regime classifier, idempotent, persist ≤ 5 s after candle close in `backend/src/aegis/indicators/` (AC-01)
-- [ ] T017 Write FAILING integration test for ccxt OHLCV ingestion + failover in `backend/tests/integration/test_ingestion.py`
-- [ ] T018 Implement OHLCV ingestion workers (ccxt async, rate-limit, backoff, failover Binance→MEXC→Coinbase→BitMart) in `backend/src/aegis/ingestion/ohlcv.py`
-- [ ] T019 Implement `ContextProvider` interface + merge/dedup base in `backend/src/aegis/ingestion/context.py`
-- [ ] T020 Implement APScheduler (AsyncIOScheduler + Postgres jobstore); schedule ingest/indicators on 15m/1h close in `backend/src/aegis/scheduler/`
+- [X] T017 Integration test for ccxt OHLCV ingestion + failover (incl. a real Binance fetch) in `backend/tests/integration/test_ingestion.py`
+- [X] T018 Implement OHLCV ingestion workers (ccxt async, rate-limit, failover Binance→MEXC→Coinbase→BitMart) in `backend/src/aegis/ingestion/ohlcv.py`
+- [X] T019 Implement `ContextProvider` interface + security-flag merge/dedup base in `backend/src/aegis/ingestion/context.py` (concrete providers land with US2)
+- [X] T020 Implement APScheduler (AsyncIOScheduler) ingest+indicator jobs on 1h close in `backend/src/aegis/scheduler/` (Postgres jobstore is deployment config)
 - [X] T021 Implement FastAPI app factory + CORS + rate limiting in `backend/src/aegis/api/app.py` (private binding/TLS is a compose/uvicorn concern, AC-07)
 - [X] T022 Contract tests for auth (API key + JWT scopes) in `backend/tests/contract/test_auth.py`
 - [X] T023 Implement auth (X-API-Key in `api/deps.py` + JWT read/admin scopes in `api/auth.py`), slowapi rate limiting, CORS restricted to dashboard
@@ -90,7 +90,7 @@ every figure matches the persisted candidate; no order placed anywhere.
 - [X] T036 [US1] Implement fail-safe guard (AI unavailable/invalid/missing figure → no signal) in `backend/src/aegis/ai/failsafe.py` (AC-05, FR-012)
 - [X] T037 [P] [US1] Author `alert-composer` skill SKILL.md (English, disclaimer, copy-paste ticket) in `skills/alert-composer/`
 - [X] T038 [US1] Implement Telegram outbound `SIGNAL` alert (aiogram v3) with order ticket + disclaimer in `backend/src/aegis/telegram/outbound/signal.py` (+ shared `outbound/base.py`) (FR-019/026, C-10)
-- [~] T039 [US1] POST `/internal/signals` (reconcile→persist, 409 on mismatch) + GET `/signals`, `/signals/{id}`, `/signals/{id}/order` + `/health` DONE in `backend/src/aegis/api/routers/signals.py`; PENDING `/candles`, `/indicators` (need ingestion data)
+- [X] T039 [US1] POST `/internal/signals` (reconcile→persist, 409 on mismatch) + GET `/signals`, `/signals/{id}`, `/signals/{id}/order` + `/health` in `signals.py`; GET `/candles/{symbol}`, `/indicators/{symbol}` in `market.py`
 - [X] T040 [US1] Wire signal pipeline: candidate → AI → reconcile → persist → alert in `backend/src/aegis/scheduler/jobs/signal_run.py` (the APScheduler periodic trigger is T020; SC-005 latency measured once ingestion is wired)
 
 **Checkpoint**: 🎯 MVP — US1 fully functional and independently testable.

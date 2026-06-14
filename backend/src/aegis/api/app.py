@@ -15,7 +15,7 @@ from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 from slowapi.util import get_remote_address
 
-from aegis.api.routers import signals
+from aegis.api.routers import market, signals
 from aegis.config.settings import Settings
 from aegis.persistence.base import make_engine, make_sessionmaker
 
@@ -38,6 +38,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     )
 
     app.include_router(signals.router, prefix="/api/v1")
+    app.include_router(market.router, prefix="/api/v1")
 
     @app.get("/api/v1/health")
     async def health() -> dict[str, str]:

@@ -94,5 +94,5 @@ files = ["src/aegis"]
 plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
-module = ["pandas_ta_classic.*", "pandas.*"]
+module = ["pandas_ta_classic.*", "pandas.*", "ccxt.*", "apscheduler.*"]
 ignore_missing_imports = true

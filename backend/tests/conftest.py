@@ -16,10 +16,13 @@ from pathlib import Path
 
 import pytest
 import pytest_asyncio
+from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncEngine
 
+from aegis.api.app import create_app
+from aegis.config.settings import Settings
 from aegis.domain import Candle, Timeframe
-from aegis.persistence.base import make_engine
+from aegis.persistence.base import make_engine, make_sessionmaker
 from aegis.persistence.schema import create_schema, drop_schema
 
 _FIXTURE = Path(__file__).parent / "fixtures" / "btcusdt_1h.json"
@@ -43,6 +46,16 @@ async def db_engine() -> AsyncIterator[AsyncEngine]:
     finally:
         await drop_schema(engine)
         await engine.dispose()
+
+
+@pytest_asyncio.fixture
+async def client(db_engine):
+    """An httpx client wired to the FastAPI app over a throwaway TimescaleDB schema."""
+    settings = Settings()
+    app = create_app(settings)
+    app.state.sessionmaker = make_sessionmaker(db_engine)
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as c:
+        yield c, settings, db_engine
 
 
 @pytest.fixture(scope="session")
