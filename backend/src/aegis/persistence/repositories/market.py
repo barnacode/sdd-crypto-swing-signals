@@ -11,8 +11,8 @@ from collections.abc import Sequence
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from aegis.domain import Candle, IndicatorSet, Regime, Timeframe
-from aegis.persistence.models import IndicatorRow, OhlcRow
+from aegis.domain import Candle, Derivatives, IndicatorSet, Regime, Timeframe
+from aegis.persistence.models import DerivativesRow, IndicatorRow, OhlcRow
 
 
 class MarketRepository:
@@ -56,6 +56,31 @@ class MarketRepository:
                 atr14=ind.atr14, adx14=ind.adx14, vol_rel=ind.vol_rel,
                 regime=ind.regime.value,
             )
+        )
+
+    async def upsert_derivatives(self, d: Derivatives) -> None:
+        await self._s.merge(
+            DerivativesRow(
+                symbol=d.symbol, ts=d.ts, funding_rate=d.funding_rate,
+                open_interest=d.open_interest, long_short_ratio=d.long_short_ratio,
+                liquidations_24h=d.liquidations_24h,
+            )
+        )
+
+    async def get_latest_derivatives(self, symbol: str) -> Derivatives | None:
+        stmt = (
+            select(DerivativesRow)
+            .where(DerivativesRow.symbol == symbol)
+            .order_by(DerivativesRow.ts.desc())
+            .limit(1)
+        )
+        r = (await self._s.execute(stmt)).scalars().first()
+        if r is None:
+            return None
+        return Derivatives(
+            symbol=r.symbol, ts=r.ts, funding_rate=r.funding_rate,
+            open_interest=r.open_interest, long_short_ratio=r.long_short_ratio,
+            liquidations_24h=r.liquidations_24h,
         )
 
     async def get_latest_indicators(self, symbol: str, tf: Timeframe) -> IndicatorSet | None:

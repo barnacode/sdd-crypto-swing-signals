@@ -114,9 +114,9 @@ suppressed/gated or a global pause is raised, without invoking the AI when a det
 
 ### Implementation for User Story 2
 
-- [ ] T045 [P] [US2] Implement derivatives ingestion (Binance futures funding/OI/long-short + Coinglass liquidations) in `backend/src/aegis/ingestion/derivatives.py` (FR-002)
-- [ ] T046 [P] [US2] Implement context providers (sentiment Fear&Greed/Reddit/Santiment; news/geo GDELT/RSS; security PeckShield/De.Fi; systemic/depeg) in `backend/src/aegis/ingestion/providers/`
-- [ ] T047 [P] [US2] Implement macro calendar provider (FMP/FRED/FOMC) + `macro_events` persistence in `backend/src/aegis/ingestion/providers/macro.py`
+- [X] T045 [P] [US2] Implement derivatives ingestion (Binance futures funding/OI/long-short + Coinglass liquidations) in `backend/src/aegis/ingestion/derivatives.py` (FR-002)
+- [~] T046 [P] [US2] Context providers: Fear&Greed sentiment DONE in `ingestion/providers/sentiment.py`; PENDING GDELT/RSS news, PeckShield/De.Fi security, systemic/depeg
+- [~] T047 [P] [US2] Macro calendar provider (FMP) + impact mapping DONE in `ingestion/providers/macro.py`; PENDING FRED/FOMC cross-check + `macro_events` ORM persistence
 - [X] T048 [US2] Implement deterministic pre-gates G1–G5 (run BEFORE confluence; no LLM on fail) in `backend/src/aegis/candidates/gates.py` (AC-02/14/15/17, FR-005)
 - [X] T049 [US2] Implement macro pre-event filter (blackout/caution, market-wide) in `backend/src/aegis/candidates/macro_filter.py` (AC-12, FR-008)
 - [X] T050 [P] [US2] Author `risk-guardian` skill (Opus 4.8) SKILL.md + schema in `skills/risk-guardian/`
