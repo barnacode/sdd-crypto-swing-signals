@@ -75,7 +75,7 @@ every figure matches the persisted candidate; no order placed anywhere.
 - [ ] T024 [P] [US1] Contract tests for GET `/signals`, `/signals/{id}`, `/signals/{id}/order` vs OpenAPI in `backend/tests/contract/test_signals_api.py`
 - [ ] T025 [P] [US1] Contract tests for `market-context` + `signal-analyst` skill I/O schemas in `backend/tests/contract/test_skills_us1.py`
 - [X] T026 [P] [US1] Unit test confluence engine + R:R < 1:2 discard without AI in `backend/tests/unit/test_confluence.py` (AC-03)
-- [ ] T027 [P] [US1] Unit test post-AI numeric reconciliation + fail-safe in `backend/tests/unit/test_reconciliation.py` (AC-04, AC-05)
+- [X] T027 [P] [US1] Unit test post-AI numeric reconciliation + fail-safe in `backend/tests/unit/test_reconciliation.py` (AC-04, AC-05)
 - [ ] T028 [P] [US1] Integration test end-to-end happy path (valid setup → one SIGNAL, figures match, no order placed) in `backend/tests/integration/test_us1_signal.py`
 
 ### Implementation for User Story 1
@@ -86,8 +86,8 @@ every figure matches the persisted candidate; no order placed anywhere.
 - [ ] T032 [P] [US1] Author `market-context` skill (Haiku 4.5) SKILL.md + output schema in `skills/market-context/`
 - [ ] T033 [P] [US1] Author `signal-analyst` skill (Opus 4.8) SKILL.md + output schema in `skills/signal-analyst/`
 - [ ] T034 [US1] Implement AI orchestration client (invoke skills, low temperature, schema-validated output) in `backend/src/aegis/ai/orchestrator.py` (FR-009/013)
-- [ ] T035 [US1] Implement post-AI numeric reconciliation + incident recording in `backend/src/aegis/ai/reconciliation.py` (AC-04, C-2)
-- [ ] T036 [US1] Implement fail-safe guard (AI unavailable/invalid/missing figure → no signal) in `backend/src/aegis/ai/failsafe.py` (AC-05, FR-012)
+- [X] T035 [US1] Implement post-AI numeric reconciliation + incident recording in `backend/src/aegis/ai/reconciliation.py` (AC-04, C-2)
+- [X] T036 [US1] Implement fail-safe guard (AI unavailable/invalid/missing figure → no signal) in `backend/src/aegis/ai/failsafe.py` (AC-05, FR-012)
 - [ ] T037 [P] [US1] Author `alert-composer` skill SKILL.md (English, disclaimer, copy-paste ticket) in `skills/alert-composer/`
 - [ ] T038 [US1] Implement Telegram outbound `SIGNAL` alert (aiogram v3) with order ticket + disclaimer in `backend/src/aegis/telegram/outbound/signal.py` (+ shared `outbound/base.py`) (FR-019/026, C-10)
 - [ ] T039 [US1] Implement POST `/internal/signals` (loopback) + GET `/signals`, `/signals/{id}`, `/signals/{id}/order`, `/candles`, `/indicators` in `backend/src/aegis/api/routers/signals.py`
