@@ -26,14 +26,14 @@ Web app per plan.md: backend Python at `backend/src/aegis/`, tests at `backend/t
 
 **Purpose**: Project initialization and tooling.
 
-- [ ] T001 Create monorepo structure (`backend/`, `frontend/`, `skills/`, `docker-compose.yml`, `.env.example`) per plan.md
-- [ ] T002 Initialize backend Python 3.12 project with PINNED deps in `backend/pyproject.toml` (ccxt, TA-Lib, **pandas-ta-classic** — never `pandas-ta`, fastapi, pydantic v2, apscheduler[sqlalchemy], aiogram v3, vectorbt, backtesting.py, httpx, slowapi, asyncpg, alembic, pytest, pytest-asyncio)
+- [X] T001 Create monorepo structure (`backend/`, `frontend/`, `skills/`, `docker-compose.yml`, `.env.example`) per plan.md
+- [X] T002 Initialize backend Python 3.12 project with PINNED deps in `backend/pyproject.toml` (ccxt, TA-Lib, **pandas-ta-classic** — never `pandas-ta`, fastapi, pydantic v2, apscheduler[sqlalchemy], aiogram v3, vectorbt, backtesting.py, httpx, slowapi, asyncpg, alembic, pytest, pytest-asyncio)
 - [ ] T003 [P] Initialize frontend Next.js + TypeScript + lightweight-charts in `frontend/`
-- [ ] T004 [P] Configure backend lint/format/type tools (ruff, black, mypy) in `backend/pyproject.toml`
+- [X] T004 [P] Configure backend lint/format/type tools (ruff, black, mypy) in `backend/pyproject.toml`
 - [ ] T005 [P] Configure frontend lint/format (eslint, prettier) in `frontend/`
-- [ ] T006 [P] Configure CI with coverage gate ≥ 80%, `pip-audit` dependency scan, and secret scan in `.github/workflows/ci.yml`
-- [ ] T007 Author `docker-compose.yml` (timescaledb, backend, scheduler, dashboard, Caddy reverse proxy, **`cloudflared` Tunnel in private-network mode — no public hostname**) bound to loopback/Docker network in repo root (remote access via Cloudflare WARP only, AC-07)
-- [ ] T008 [P] Create `.env.example` with all MVP keys and verify `.env` is gitignored
+- [X] T006 [P] Configure CI with coverage gate ≥ 80%, `pip-audit` dependency scan, and secret scan in `.github/workflows/ci.yml`
+- [X] T007 Author `docker-compose.yml` (timescaledb, backend, scheduler, dashboard, Caddy reverse proxy, **`cloudflared` Tunnel in private-network mode — no public hostname**) bound to loopback/Docker network in repo root (remote access via Cloudflare WARP only, AC-07)
+- [X] T008 [P] Create `.env.example` with all MVP keys and verify `.env` is gitignored
 
 ---
 
@@ -42,7 +42,7 @@ Web app per plan.md: backend Python at `backend/src/aegis/`, tests at `backend/t
 **Purpose**: Core infrastructure shared by ALL stories (determinism boundary, persistence, ingestion,
 indicators, API skeleton). **⚠️ No user story can begin until this phase is complete.**
 
-- [ ] T009 [P] Define domain Pydantic v2 schemas for all entities in `backend/src/aegis/domain/` (candle, indicators, derivatives, context, macro_event, signal_candidate, signal, order_ticket, ai_audit, alert, outcome, position, strategy, backtest)
+- [X] T009 [P] Define domain Pydantic v2 schemas for all entities in `backend/src/aegis/domain/` (candle, indicators, derivatives, context, macro_event, signal_candidate, signal, order_ticket, ai_audit, alert, outcome, position, strategy, backtest)
 - [ ] T010 Implement settings + secret loading + data-provider registry in `backend/src/aegis/config/`
 - [ ] T011 [P] Implement structured logging (no secret/body leakage) + error-handling middleware in `backend/src/aegis/config/logging.py`
 - [ ] T012 Author Alembic migration: tables + hypertables (ohlc, indicators, derivatives) + continuous aggregates 1h→4h→1d in `backend/src/aegis/persistence/migrations/`
