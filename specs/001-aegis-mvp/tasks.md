@@ -139,18 +139,18 @@ HODL is not promoted.
 ### Tests for User Story 5 (write first — must fail)
 
 - [ ] T054 [P] [US5] Contract tests for POST/GET `/backtests` + GET `/performance` in `backend/tests/contract/test_backtests_api.py`
-- [ ] T055 [P] [US5] Unit test deterministic outcome labeler HIT/STOP/EXPIRED in `backend/tests/unit/test_outcome_labeler.py` (AC-08)
-- [ ] T056 [P] [US5] Unit test alpha-vs-HODL benchmark + promotion gate keeps sub-KPI strategy in shadow in `backend/tests/unit/test_promotion.py` (AC-06, AC-16)
+- [X] T055 [P] [US5] Unit test deterministic outcome labeler HIT/STOP/EXPIRED in `backend/tests/unit/test_outcome_labeler.py` (AC-08)
+- [X] T056 [P] [US5] Unit test alpha-vs-HODL benchmark + promotion gate keeps sub-KPI strategy in shadow in `backend/tests/unit/test_promotion.py` (AC-06, AC-16)
 - [ ] T057 [P] [US5] Integration test: sub-KPI stays shadow (no Telegram); fails-HODL not promoted in `backend/tests/integration/test_us5_validation.py`
 
 ### Implementation for User Story 5
 
-- [ ] T058 [P] [US5] Implement deterministic outcome labeler (HIT/STOP/EXPIRED, realized_pct) in `backend/src/aegis/validation/outcome_labeler.py` (AC-08, FR-018)
+- [X] T058 [P] [US5] Implement deterministic outcome labeler (HIT/STOP/EXPIRED, realized_pct) in `backend/src/aegis/validation/outcome_labeler.py` (AC-08, FR-018)
 - [ ] T059 [P] [US5] Author `backtest-runner` skill (vectorbt, fees/slippage, walk-forward) SKILL.md in `skills/backtest-runner/`
 - [ ] T060 [US5] Implement backtest-runner integration (vectorbt) + `backtests` persistence in `backend/src/aegis/validation/backtest_runner.py` (FR-024)
-- [ ] T061 [P] [US5] Implement risk-adjusted alpha-vs-HODL benchmark in `backend/src/aegis/validation/hodl_benchmark.py` (AC-16, C-13)
+- [X] T061 [P] [US5] Implement risk-adjusted alpha-vs-HODL benchmark in `backend/src/aegis/validation/hodl_benchmark.py` (AC-16, C-13)
 - [ ] T062 [P] [US5] Author `signal-evaluator` skill (LLM-as-judge, calibration) SKILL.md in `skills/signal-evaluator/`
-- [ ] T063 [US5] Implement promotion gate + circuit breaker (shadow↔production by KPIs incl. alpha) + `strategies` persistence in `backend/src/aegis/validation/promotion.py` (AC-06, FR-025, C-5)
+- [~] T063 [US5] Promotion gate + circuit breaker (shadow↔production by KPIs incl. alpha) DONE in `validation/promotion.py` (AC-06, FR-025, C-5); PENDING `strategies` ORM persistence
 - [ ] T064 [US5] Implement POST/GET `/backtests` + GET `/performance` (admin scope) in `backend/src/aegis/api/routers/validation.py`
 - [ ] T065 [US5] Wire validation pipeline + shadow-mode gating of Telegram alerts in `backend/src/aegis/scheduler/jobs/validation_run.py`
 
